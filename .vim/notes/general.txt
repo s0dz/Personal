@@ -1,2 +1,0 @@
-// Compile vim from source
-// http://www.fullybaked.co.uk/articles/installing-latest-vim-on-centos-from-source

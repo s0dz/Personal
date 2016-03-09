@@ -1,14 +1,60 @@
-" My vimrc
-" Bill Frasure
-"
-" It grows stronger every day.
+set nocompatible              " be iMproved, required
+filetype off                  " required
 
-execute pathogen#infect()
-execute pathogen#helptags()
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+" The following are examples of different formats supported.
+" Keep Plugin commands between vundle#begin/end.
+" plugin on GitHub repo
+Plugin 'tpope/vim-fugitive'
+Plugin 'nendre/command-t'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'scrooloose/syntastic'
+Plugin 'sjl/gundo.vim'
+Plugin 'Valloric/YouCompleteMe'
+
+" plugin from http://vim-scripts.org/vim/scripts.html
+" Plugin 'L9'
+
+" Git plugin not hosted on GitHub
+" Plugin 'git://git.wincent.com/command-t.git'
+
+" git repos on your local machine (i.e. when working on your own plugin)
+" Plugin 'file:///home/gmarik/path/to/plugin'
+
+" The sparkup vim script is in a subdirectory of this repo called vim.
+" Pass the path to set the runtimepath properly.
+" Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
+
+" Install L9 and avoid a Naming conflict if you've already installed a
+" different version somewhere else.
+" Plugin 'ascenator/L9', {'name': 'newL9'}
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" To ignore plugin indent changes, instead use:
+"filetype plugin on
+"
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+"
+" see :h vundle for more details or wiki for FAQ
+" Put your non-Plugin stuff after this line
+
+"================================================================================="
 
 " Options {{{
-  " Use Vim settings, rather then Vi settings (much better!).
-  " This must be first, because it changes other options as a side effect.
 
   set autoindent
   set expandtab
@@ -16,11 +62,6 @@ execute pathogen#helptags()
   set sta
   set ts=2
   set et
-
-  set nocompatible
-
-  " Used for powerline
-  set laststatus=2
 
   " Show branch name in buffer status line
   set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
@@ -36,13 +77,6 @@ execute pathogen#helptags()
 
   " ctags options
   set tags=./.tags,.tags,./tags,tags
-
-  "MiniBufExplorer options
-  let g:miniBufExplMapWindowNavVim = 1
-  let g:miniBufExplMapWindowNavArrows = 1
-  let g:miniBufExplMapCTabSwitchBufs = 1
-  let g:miniBufExplModSelTarget = 1 
-
 
   if ( &ft == "java" )
     set makeprg=vimAnt.sh
@@ -212,28 +246,6 @@ execute pathogen#helptags()
   call LoadCscope()
 
 " }}}
-" vim-latex {{{
-
-  function! LatexSuite()
-    source ~/.vim/ftplugin/tex_latexSuite.vim
-  endfunction
-  " REQUIRED. This makes vim invoke Latex-Suite when you open a tex file.
-  filetype plugin on
-
-  " IMPORTANT: grep will sometimes skip displaying the file name if you
-  " search in a singe file. This will confuse Latex-Suite. Set your grep
-  " program to always generate a file-name.
-  set grepprg=grep\ -nH\ $*
-
-  " OPTIONAL: This enables automatic indentation as you type.
-  filetype indent on
-
-  " OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
-  " 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
-  " The following changes the default filetype back to 'tex':
-  let g:tex_flavor='latex'
-
-" }}}
 " WindowsShit {{{
   " For Win32 GUI: remove 't' flag from 'guioptions': no tearoff menu entries
   " let &guioptions = substitute(&guioptions, "t", "", "g")
@@ -251,7 +263,7 @@ execute pathogen#helptags()
 
   " If the current buffer has never been saved, it will have no name,
   " call the file browser to save it, otherwise just save it.
-  command -nargs=0 -bar Update if &modified 
+  command! -nargs=0 -bar Update if &modified 
                              \|    if empty(bufname('%'))
                              \|        browse confirm write
                              \|    else
@@ -358,42 +370,6 @@ execute pathogen#helptags()
   nnoremap <C-k> <C-w>k
   nnoremap <C-l> <C-w>l
 
-" }}}
-" Abbreviations {{{
-
-  " OpenGL abbreviations {{{
-    ab glB glBegin
-    ab glC glClear
-    ab glC3f glColor3f
-    ab glCC glClearColor
-    ab glE glEnd
-    ab glF glFlush
-    ab glLI glLoadIdentity
-    ab glMM glMatrixMode
-    ab glV2f glVertex2f
-    ab GL_C_B_B GL_COLOR_BUFFER_BIT
-    ab GL_PO GL_POLYGON
-    ab GL_PR GL_PROJECTION
-    ab gluO gluOrtho
-    ab glutCW glutCreateWindow
-    ab glutDF glutDisplayFunc
-    ab glutI glutInit
-    ab glutIDM glutInitDisplayMode
-    ab glutIWP glutInitWindowPosition
-    ab glutIWS glutInitWindowSize
-    ab glutML glutMainLoop
-  " }}}
-
-  "Abbreviations
-  ab #b /*******************************
-  ab #e *******************************/
-
-  "Java Abbreviations"
-  ab jp/ System.out.println(
-  iab jc/ /*
-  \<CR>  *
-  \<CR>  *
-  \<CR>  */
 
 " }}}
 " Unsorted {{{
@@ -443,7 +419,7 @@ execute pathogen#helptags()
     \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
     \gV:call setreg('"', old_reg, old_regtype)<CR>
 
-  function s:MkNonExDir(file, buf)
+  function! s:MkNonExDir(file, buf)
     if empty(getbufvar(a:buf, '&buftype')) && a:file!~#'\v^\w+\:\/'
       let dir=fnamemodify(a:file, ':h')
       if !isdirectory(dir)
@@ -457,49 +433,6 @@ execute pathogen#helptags()
   augroup END
 
 " }}}
-
-" Scala tags
-function! SCTags()
-  if executable("sctags")
-    let g:tagbar_ctags_bin = "sctags"
-    let g:tagbar_type_scala = {
-          \ 'ctagstype' : 'scala',
-          \ 'sro'       : '.',
-          \ 'kinds'     : [
-          \ 'p:packages',
-          \ 'V:values',
-          \ 'v:variables',
-          \ 'T:types',
-          \ 't:traits',
-          \ 'o:objects',
-          \ 'O:case objects',
-          \ 'c:classes',
-          \ 'C:case classes',
-          \ 'm:methods:1'
-          \ ],
-          \ 'kind2scope'  : {
-          \ 'p' : 'package',
-          \ 'T' : 'type',
-          \ 't' : 'trait',
-          \ 'o' : 'object',
-          \ 'O' : 'case_object',
-          \ 'c' : 'class',
-          \ 'C' : 'case_class',
-          \ 'm' : 'method'
-          \ },
-          \ 'scope2kind'  : {
-          \ 'package' : 'p',
-          \ 'type' : 'T',
-          \ 'trait' : 't',
-          \ 'object' : 'o',
-          \ 'case_object' : 'O',
-          \ 'class' : 'c',
-          \ 'case_class' : 'C',
-          \ 'method' : 'm'
-          \ }
-          \ }
-  endif
-endfunction
 
 function! NewHelpKey()
   nnoremap K <C-]>
